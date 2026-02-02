@@ -1,0 +1,17 @@
+{
+  "name": "@openclaw/irc",
+  "version": "1.0.0",
+  "description": "IRC channel plugin for OpenClaw",
+  "main": "index.ts",
+  "openclaw": {
+    "channel": {
+      "id": "irc",
+      "label": "IRC",
+      "selectionLabel": "IRC (Internet Relay Chat)",
+      "detailLabel": "IRC",
+      "blurb": "text-based chat protocol with channel and direct message support.",
+      "docsPath": "/channels/irc",
+      "systemImage": "bubble.left"
+    }
+  }
+}
