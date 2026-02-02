@@ -64,6 +64,9 @@ import {
   listDiscordDirectoryPeersLive,
 } from "../../discord/directory-live.js";
 import { monitorDiscordProvider } from "../../discord/monitor.js";
+import { isUserAllowed, monitorIrcProvider } from "../../irc/monitor.js";
+import { resolveIrcAccount } from "../../irc/accounts.js";
+import { sendMessageIrc } from "../../irc/send-wrapper.js";
 import { probeDiscord } from "../../discord/probe.js";
 import { resolveDiscordChannelAllowlist } from "../../discord/resolve-channels.js";
 import { resolveDiscordUserAllowlist } from "../../discord/resolve-users.js";
@@ -301,6 +304,12 @@ export function createPluginRuntime(): PluginRuntime {
         monitorIMessageProvider,
         probeIMessage,
         sendMessageIMessage,
+      },
+      irc: {
+        resolveIrcAccount,
+        sendMessageIrc,
+        monitorIrcProvider,
+        isUserAllowed,
       },
       whatsapp: {
         getActiveWebListener,

@@ -131,6 +131,10 @@ type SignalMessageActions =
 type MonitorIMessageProvider = typeof import("../../imessage/monitor.js").monitorIMessageProvider;
 type ProbeIMessage = typeof import("../../imessage/probe.js").probeIMessage;
 type SendMessageIMessage = typeof import("../../imessage/send.js").sendMessageIMessage;
+type ResolveIrcAccount = typeof import("../../irc/accounts.js").resolveIrcAccount;
+type SendMessageIrc = typeof import("../../irc/send-wrapper.js").sendMessageIrc;
+type MonitorIrcProvider = typeof import("../../irc/monitor.js").monitorIrcProvider;
+type IsUserAllowed = typeof import("../../irc/monitor.js").isUserAllowed;
 type GetActiveWebListener = typeof import("../../web/active-listener.js").getActiveWebListener;
 type GetWebAuthAgeMs = typeof import("../../web/auth-store.js").getWebAuthAgeMs;
 type LogoutWeb = typeof import("../../web/auth-store.js").logoutWeb;
@@ -313,6 +317,12 @@ export type PluginRuntime = {
       monitorIMessageProvider: MonitorIMessageProvider;
       probeIMessage: ProbeIMessage;
       sendMessageIMessage: SendMessageIMessage;
+    };
+    irc: {
+      resolveIrcAccount: ResolveIrcAccount;
+      sendMessageIrc: SendMessageIrc;
+      monitorIrcProvider: MonitorIrcProvider;
+      isUserAllowed: IsUserAllowed;
     };
     whatsapp: {
       getActiveWebListener: GetActiveWebListener;
