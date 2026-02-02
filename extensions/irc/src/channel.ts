@@ -1,6 +1,7 @@
 import {
   buildChannelConfigSchema,
   getChatChannelMeta,
+  IrcConfigSchema,
   type ChannelPlugin,
 } from "openclaw/plugin-sdk";
 
@@ -18,10 +19,7 @@ export const ircPlugin: ChannelPlugin<unknown> = {
     nativeCommands: true,
     blockStreaming: true,
   },
-  configSchema: buildChannelConfigSchema({
-    type: "object",
-    properties: {},
-  }),
+  configSchema: buildChannelConfigSchema(IrcConfigSchema),
   config: {
     listAccountIds: (cfg) => getIrcRuntime().channel.irc.listAccountIds(cfg),
     resolveAccount: (cfg, accountId) =>

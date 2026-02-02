@@ -97,6 +97,7 @@ export type {
 export {
   DiscordConfigSchema,
   GoogleChatConfigSchema,
+  IrcConfigSchema,
   IMessageConfigSchema,
   MSTeamsConfigSchema,
   SignalConfigSchema,
