@@ -1,6 +1,7 @@
 import type { OpenClawConfig } from "../config/config.js";
 import { resolveDiscordAccount } from "../discord/accounts.js";
 import { resolveIMessageAccount } from "../imessage/accounts.js";
+import { resolveIrcAccount } from "../irc/accounts-resolver.js";
 import { resolveSignalAccount } from "../signal/accounts.js";
 import { resolveSlackAccount, resolveSlackReplyToMode } from "../slack/accounts.js";
 import { buildSlackThreadingToolContext } from "../slack/threading-tool-context.js";
@@ -211,6 +212,60 @@ const DOCKS: Record<ChatChannelId, ChannelDock> = {
         currentThreadTs: context.ReplyToId,
         hasRepliedRef,
       }),
+    },
+  },
+  irc: {
+    id: "irc",
+    capabilities: {
+      chatTypes: ["direct", "group"],
+      nativeCommands: true,
+      blockStreaming: true,
+    },
+    outbound: { textChunkLimit: 512 },
+    commands: {
+      enforceOwnerForCommands: false,
+      skipWhenConfigEmpty: false,
+    },
+    config: {
+      resolveAllowFrom: ({ cfg, accountId }) =>
+        (resolveIrcAccount({ cfg, accountId }).config.dm?.allowFrom ?? []).map((entry) =>
+          String(entry),
+        ),
+      formatAllowFrom: ({ allowFrom }) =>
+        allowFrom
+          .map((entry) => String(entry).trim())
+          .filter(Boolean)
+          .map((entry) => entry.toLowerCase()),
+    },
+    groups: {
+      resolveRequireMention: ({ cfg, accountId }) => {
+        const account = resolveIrcAccount({ cfg, accountId });
+        const networks = account.config.networks || {};
+        // Check if any network requires mention
+        for (const network of Object.values(networks)) {
+          if (network && typeof network === "object" && "requireMention" in network) {
+            const requireMention = (network as { requireMention?: boolean }).requireMention;
+            if (requireMention !== undefined) return requireMention;
+          }
+        }
+        return false;
+      },
+      resolveToolPolicy: () => {
+        // Default tool policy for IRC
+        return undefined;
+      },
+    },
+    threading: {
+      buildToolContext: ({ context, hasRepliedRef }) => {
+        const isDirect = !(context.To?.startsWith("#") ?? false);
+        const channelId =
+          (isDirect ? (context.From ?? context.To) : context.To)?.trim() || undefined;
+        return {
+          currentChannelId: channelId,
+          currentThreadTs: context.ReplyToId,
+          hasRepliedRef,
+        };
+      },
     },
   },
   googlechat: {

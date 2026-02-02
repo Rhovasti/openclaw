@@ -770,3 +770,113 @@ export const MSTeamsConfigSchema = z
         'channels.msteams.dmPolicy="open" requires channels.msteams.allowFrom to include "*"',
     });
   });
+
+// IRC channel configuration schema
+
+const IrcSaslSchema = z
+  .object({
+    account: z.string(),
+    password: z.string(),
+  })
+  .strict();
+
+const IrcNickServSchema = z
+  .object({
+    password: z.string(),
+  })
+  .strict();
+
+const IrcServerConfigSchema = z
+  .object({
+    host: z.string(),
+    port: z.number().int().positive().optional(),
+    tls: z.boolean().optional(),
+    password: z.string().optional(),
+    nick: z.string(),
+    username: z.string().optional(),
+    gecos: z.string().optional(),
+    sasl: IrcSaslSchema.optional(),
+    nickserv: IrcNickServSchema.optional(),
+    channels: z.array(z.string()).optional(),
+  })
+  .strict();
+
+const IrcChannelConfigSchema = z
+  .object({
+    allow: z.boolean().optional(),
+    requireMention: z.boolean().optional(),
+    tools: ToolPolicySchema.optional(),
+    toolsBySender: ToolPolicyBySenderSchema,
+    skills: z.array(z.string()).optional(),
+    enabled: z.boolean().optional(),
+    users: z.array(z.string()).optional(),
+    systemPrompt: z.string().optional(),
+  })
+  .strict();
+
+const IrcNetworkEntrySchema = z
+  .object({
+    slug: z.string().optional(),
+    requireMention: z.boolean().optional(),
+    tools: ToolPolicySchema.optional(),
+    toolsBySender: ToolPolicyBySenderSchema,
+    users: z.array(z.string()).optional(),
+    channels: z.record(z.string(), IrcChannelConfigSchema.optional()).optional(),
+  })
+  .strict();
+
+const IrcDmConfigSchema = z
+  .object({
+    enabled: z.boolean().optional(),
+    policy: DmPolicySchema.optional().default("pairing"),
+    allowFrom: z.array(z.string()).optional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    requireOpenAllowFrom({
+      policy: value.policy,
+      allowFrom: value.allowFrom,
+      ctx,
+      path: ["allowFrom"],
+      message: 'channels.irc.dm.policy="open" requires channels.irc.dm.allowFrom to include "*"',
+    });
+  });
+
+export const IrcAccountSchemaBase = z
+  .object({
+    name: z.string().optional(),
+    capabilities: z.array(z.string()).optional(),
+    markdown: MarkdownConfigSchema,
+    enabled: z.boolean().optional(),
+    configWrites: z.boolean().optional(),
+    server: IrcServerConfigSchema,
+    groupPolicy: GroupPolicySchema.optional().default("allowlist"),
+    networks: z.record(z.string(), IrcNetworkEntrySchema.optional()).optional(),
+    dm: IrcDmConfigSchema.optional(),
+    commands: ProviderCommandsSchema,
+    commandPrefix: z.string().optional(),
+    replyToMode: ReplyToModeSchema.optional(),
+    retry: RetryConfigSchema.optional(),
+    historyLimit: z.number().int().min(0).optional(),
+    heartbeat: ChannelHeartbeatVisibilitySchema,
+    blockStreamingCoalesce: BlockStreamingCoalesceSchema.optional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    const dm = value.dm;
+    if (dm) {
+      requireOpenAllowFrom({
+        policy: dm.policy,
+        allowFrom: dm.allowFrom,
+        ctx,
+        path: ["dm", "allowFrom"],
+        message: 'channels.irc.dm.policy="open" requires channels.irc.dm.allowFrom to include "*"',
+      });
+    }
+  });
+
+export const IrcAccountSchema = IrcAccountSchemaBase;
+
+export const IrcConfigSchema = IrcAccountSchemaBase.extend({
+  accounts: z.record(z.string(), IrcAccountSchema.optional()).optional(),
+});
