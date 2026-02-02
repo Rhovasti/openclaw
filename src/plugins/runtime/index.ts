@@ -65,8 +65,23 @@ import {
 } from "../../discord/directory-live.js";
 import { monitorDiscordProvider } from "../../discord/monitor.js";
 import { isUserAllowed, monitorIrcProvider } from "../../irc/monitor.js";
-import { resolveIrcAccount } from "../../irc/accounts.js";
+import {
+  resolveIrcAccount,
+  listIrcAccountIds,
+  resolveDefaultIrcAccountId,
+} from "../../irc/accounts.js";
 import { sendMessageIrc } from "../../irc/send-wrapper.js";
+import { probeIrc } from "../../irc/probe.js";
+import {
+  isAccountConfigured,
+  isAccountEnabled,
+  describeAccount,
+  resolveAllowFrom,
+  formatAllowFrom,
+  buildAccountSnapshot,
+  collectStatusIssues,
+} from "../../irc/config-helpers.js";
+import { normalizeIrcMessagingTarget } from "../../channels/plugins/normalize/irc.js";
 import { probeDiscord } from "../../discord/probe.js";
 import { resolveDiscordChannelAllowlist } from "../../discord/resolve-channels.js";
 import { resolveDiscordUserAllowlist } from "../../discord/resolve-users.js";
@@ -307,9 +322,20 @@ export function createPluginRuntime(): PluginRuntime {
       },
       irc: {
         resolveIrcAccount,
+        listAccountIds: listIrcAccountIds,
+        defaultAccountId: resolveDefaultIrcAccountId,
         sendMessageIrc,
         monitorIrcProvider,
         isUserAllowed,
+        isAccountConfigured,
+        isAccountEnabled,
+        describeAccount,
+        resolveAllowFrom,
+        formatAllowFrom,
+        buildAccountSnapshot,
+        collectStatusIssues,
+        probeIrc,
+        normalizeIrcMessagingTarget,
       },
       whatsapp: {
         getActiveWebListener,

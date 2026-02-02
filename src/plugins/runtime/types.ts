@@ -132,9 +132,21 @@ type MonitorIMessageProvider = typeof import("../../imessage/monitor.js").monito
 type ProbeIMessage = typeof import("../../imessage/probe.js").probeIMessage;
 type SendMessageIMessage = typeof import("../../imessage/send.js").sendMessageIMessage;
 type ResolveIrcAccount = typeof import("../../irc/accounts.js").resolveIrcAccount;
+type ListIrcAccountIds = typeof import("../../irc/accounts.js").listIrcAccountIds;
+type ResolveDefaultIrcAccountId = typeof import("../../irc/accounts.js").resolveDefaultIrcAccountId;
 type SendMessageIrc = typeof import("../../irc/send-wrapper.js").sendMessageIrc;
 type MonitorIrcProvider = typeof import("../../irc/monitor.js").monitorIrcProvider;
 type IsUserAllowed = typeof import("../../irc/monitor.js").isUserAllowed;
+type ProbeIrc = typeof import("../../irc/probe.js").probeIrc;
+type IsAccountConfigured = typeof import("../../irc/config-helpers.js").isAccountConfigured;
+type IsAccountEnabled = typeof import("../../irc/config-helpers.js").isAccountEnabled;
+type DescribeAccount = typeof import("../../irc/config-helpers.js").describeAccount;
+type ResolveAllowFrom = typeof import("../../irc/config-helpers.js").resolveAllowFrom;
+type FormatAllowFrom = typeof import("../../irc/config-helpers.js").formatAllowFrom;
+type BuildAccountSnapshot = typeof import("../../irc/config-helpers.js").buildAccountSnapshot;
+type CollectStatusIssues = typeof import("../../irc/config-helpers.js").collectStatusIssues;
+type NormalizeIrcMessagingTarget =
+  typeof import("../../channels/plugins/normalize/irc.js").normalizeIrcMessagingTarget;
 type GetActiveWebListener = typeof import("../../web/active-listener.js").getActiveWebListener;
 type GetWebAuthAgeMs = typeof import("../../web/auth-store.js").getWebAuthAgeMs;
 type LogoutWeb = typeof import("../../web/auth-store.js").logoutWeb;
@@ -320,9 +332,20 @@ export type PluginRuntime = {
     };
     irc: {
       resolveIrcAccount: ResolveIrcAccount;
+      listAccountIds: ListIrcAccountIds;
+      defaultAccountId: ResolveDefaultIrcAccountId;
       sendMessageIrc: SendMessageIrc;
       monitorIrcProvider: MonitorIrcProvider;
       isUserAllowed: IsUserAllowed;
+      isAccountConfigured: IsAccountConfigured;
+      isAccountEnabled: IsAccountEnabled;
+      describeAccount: DescribeAccount;
+      resolveAllowFrom: ResolveAllowFrom;
+      formatAllowFrom: FormatAllowFrom;
+      buildAccountSnapshot: BuildAccountSnapshot;
+      collectStatusIssues: CollectStatusIssues;
+      probeIrc: ProbeIrc;
+      normalizeIrcMessagingTarget: NormalizeIrcMessagingTarget;
     };
     whatsapp: {
       getActiveWebListener: GetActiveWebListener;
