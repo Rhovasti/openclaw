@@ -21,11 +21,15 @@ export type PluginAutoEnableResult = {
   changes: string[];
 };
 
+// Built-in channels (telegram, discord, slack, signal, imessage, irc, etc.) are part of core
+// and should NOT be auto-enabled as plugins. Only extension channels (twitch, etc.) should be.
+const BUILTIN_CHANNEL_IDS = new Set(listChatChannels().map((meta) => meta.id));
 const CHANNEL_PLUGIN_IDS = Array.from(
-  new Set([
-    ...listChatChannels().map((meta) => meta.id),
-    ...listChannelPluginCatalogEntries().map((entry) => entry.id),
-  ]),
+  new Set(
+    listChannelPluginCatalogEntries()
+      .map((entry) => entry.id)
+      .filter((id) => !BUILTIN_CHANNEL_IDS.has(id)),
+  ),
 );
 
 const PROVIDER_PLUGIN_IDS: Array<{ pluginId: string; providerId: string }> = [
