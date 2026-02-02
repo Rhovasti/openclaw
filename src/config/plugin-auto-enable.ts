@@ -246,11 +246,17 @@ function resolveConfiguredPlugins(
 ): PluginEnableChange[] {
   const changes: PluginEnableChange[] = [];
   const channelIds = new Set(CHANNEL_PLUGIN_IDS);
+  // Note: Built-in channels (telegram, discord, slack, signal, imessage, irc, etc.)
+  // are part of core OpenClaw and should NOT be auto-enabled as plugins.
+  // Only extension channels (twitch, etc.) should be auto-enabled.
   const configuredChannels = cfg.channels as Record<string, unknown> | undefined;
   if (configuredChannels && typeof configuredChannels === "object") {
     for (const key of Object.keys(configuredChannels)) {
       if (key === "defaults") continue;
-      channelIds.add(key);
+      // Only add non-built-in channels (extension plugins)
+      if (!BUILTIN_CHANNEL_IDS.has(key)) {
+        channelIds.add(key);
+      }
     }
   }
   for (const channelId of channelIds) {
